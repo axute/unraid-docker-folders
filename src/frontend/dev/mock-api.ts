@@ -11,6 +11,28 @@ import type { Plugin } from 'vite';
 
 // --- Mock data ---
 
+/**
+ * Service widgets, as `widgets.php` answers them. Keyed by container name,
+ * so a fixture survives an id change in the container list.
+ */
+const serviceWidgets: Record<string, unknown> = {
+  plex: {
+    type: 'jellyfin',
+    target: 'http://172.17.0.2:32400',
+    fields: [
+      { key: 'movies', label: 'Movies', value: 812, format: 'number' },
+      { key: 'series', label: 'Series', value: 94, format: 'number' },
+      { key: 'episodes', label: 'Episodes', value: 4021, format: 'number' },
+      { key: 'songs', label: 'Songs', value: 0, format: 'number' },
+    ],
+  },
+  pihole: {
+    type: 'pihole',
+    error: 'unsupported',
+    message: 'Widget type "pihole" is not supported yet',
+  },
+};
+
 let nextFolderId = 5;
 
 /** Security findings the user accepted. Lives in memory, like everything here. */
@@ -37,7 +59,12 @@ const containers = [
       { Source: '/mnt/user/media', Destination: '/media/library', Type: 'bind', RW: true },
     ],
     networkSettings: { bridge: { IPAddress: '172.17.0.2' } },
-    labels: { 'net.unraid.docker.support': 'https://forums.unraid.net/topic/40463-support-linuxserverio-plex-media-server/' },
+    labels: {
+      'net.unraid.docker.support': 'https://forums.unraid.net/topic/40463-support-linuxserverio-plex-media-server/',
+      // Service widget fixture. The mock answers as Jellyfin would.
+      'homepage.widget.type': 'jellyfin',
+      'homepage.widget.key': 'mock-key',
+    },
   },
   {
     id: 'bcd234efg567', name: 'postgres', image: 'postgres:16-alpine', state: 'running',
@@ -241,7 +268,7 @@ const containers = [
     ],
     mounts: [{ Source: '/mnt/user/appdata/pihole', Destination: '/etc/pihole', Type: 'bind', RW: true }],
     networkSettings: { bridge: { IPAddress: '172.17.0.12' } },
-    labels: {},
+    labels: { 'homepage.widget.type': 'pihole', 'homepage.widget.key': 'mock-key' },
   },
   // NO CONFLICT (protocol differs): stopped, host 53/TCP — pihole only holds 53/UDP.
   {
@@ -795,6 +822,17 @@ function handleStats(_req: any, res: any, params: Record<string, string>) {
     stats[id] = generateMockStats(id);
   }
   return json(res, { stats });
+}
+
+function handleServiceWidgets(res: any, params: Record<string, string>) {
+  const ids = (params.ids || '').split(',').filter(Boolean);
+  const widgets: Record<string, unknown> = {};
+  for (const id of ids) {
+    const container = containers.find((c) => c.id === id);
+    const widget = container && serviceWidgets[container.name];
+    if (widget) widgets[id] = widget;
+  }
+  return json(res, { widgets });
 }
 
 // --- Updates mock ---
@@ -1446,6 +1484,8 @@ export function mockApiPlugin(): Plugin {
             await handleSettings(req, res);
           } else if (endpoint === 'stats.php') {
             handleStats(req, res, params);
+          } else if (endpoint === 'widgets.php') {
+            handleServiceWidgets(res, params);
           } else if (endpoint === 'updates.php') {
             await handleUpdates(req, res, params);
           } else if (endpoint === 'pull.php') {

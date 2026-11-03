@@ -106,3 +106,28 @@ export function formatUptime(isoDate: string): string {
   if (minutes > 0) return `${minutes}m`;
   return '< 1m';
 }
+
+const BITRATE_UNITS = ['bit/s', 'kbit/s', 'Mbit/s', 'Gbit/s', 'Tbit/s'];
+
+/** Bits per second in decimal units, as speed tests report them: "250 Mbit/s". */
+export function formatBitrate(bitsPerSecond: number): string {
+  if (!Number.isFinite(bitsPerSecond) || bitsPerSecond <= 0) return '0 bit/s';
+  const i = Math.min(Math.floor(Math.log(bitsPerSecond) / Math.log(1000)), BITRATE_UNITS.length - 1);
+  const value = bitsPerSecond / Math.pow(1000, i);
+  return `${value >= 100 ? value.toFixed(0) : value.toFixed(1)} ${BITRATE_UNITS[i]}`;
+}
+
+/** A service widget field's value, by the format the server named. */
+export function formatWidgetValue(value: number | string, format: string): string {
+  if (typeof value === 'string') return value;
+  switch (format) {
+    case 'bytes':
+      return formatBytes(value);
+    case 'bitrate':
+      return formatBitrate(value);
+    case 'ms':
+      return `${value >= 10 ? Math.round(value) : value.toFixed(1)} ms`;
+    default:
+      return value.toLocaleString();
+  }
+}

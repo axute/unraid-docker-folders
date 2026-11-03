@@ -52,6 +52,7 @@ export class DockerFoldersSettingInput {
 export const ALLOWED_SETTING_KEYS = [
     'distinguish_healthy',
     'show_stats',
+    'show_service_widgets',
     'replace_docker_section',
     'show_legacy_containers',
     'show_legacy_buttons',

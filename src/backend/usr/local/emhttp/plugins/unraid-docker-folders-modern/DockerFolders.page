@@ -16,6 +16,7 @@ foreach ($rows as $row) {
 }
 $distinguishHealthy = ($settings['distinguish_healthy'] ?? '1') === '1';
 $showStats = ($settings['show_stats'] ?? '1') === '1';
+$showServiceWidgets = ($settings['show_service_widgets'] ?? '1') === '1';
 $memoryCalculation = ($settings['memory_calculation'] ?? '') === 'raw' ? 'raw' : 'docker';
 $memoryCalculationOptions = ['docker' => 'Docker CLI (excludes page cache)', 'raw' => 'Raw cgroup (includes page cache)'];
 $replaceDockerSection = ($settings['replace_docker_section'] ?? '1') === '1';
@@ -698,6 +699,17 @@ if (file_exists($changelogPath)) {
       <div class="setting-control">
         <input type="checkbox" id="show-stats" <?= $showStats ? 'checked' : '' ?> onchange="saveSetting('show_stats', this.checked ? '1' : '0')" />
         <span id="save-status-show-stats" class="save-status">Saved</span>
+      </div>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <label for="show-service-widgets">Show service widgets</label>
+        <div class="description">Shows a one-line summary from the service itself on its card, such as the library counts of Jellyfin. Read from the gethomepage labels <code>homepage.widget.type</code> and <code>homepage.widget.key</code>, so containers already set up for gethomepage need nothing else. The server calls the service, at the container's own address and the port in its WebUI, unless <code>homepage.widget.url</code> is set. Supported: Jellyfin, Immich, Paperless-ngx, Gotify, Speedtest Tracker. <strong>Default: On</strong></div>
+      </div>
+      <div class="setting-control">
+        <input type="checkbox" id="show-service-widgets" <?= $showServiceWidgets ? 'checked' : '' ?> onchange="saveSetting('show_service_widgets', this.checked ? '1' : '0')" />
+        <span id="save-status-show-service-widgets" class="save-status">Saved</span>
       </div>
     </div>
 

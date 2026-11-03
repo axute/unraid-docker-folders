@@ -319,7 +319,7 @@ non-obvious and the existing code depends on them.
 `include/config.php` first, then `include/auth.php`, then `requireAuth()` before
 any dispatch. The order is load-bearing: `requireAuth()` calls `errorResponse()`
 from config.php, and config.php's `getRequestData()` calls `getRawBody()` from
-auth.php. All nine endpoints in `api/` follow this.
+auth.php. All ten endpoints in `api/` follow this.
 
 `errorResponse()` → `jsonResponse()` (`config.php:454-472`) ends in `exit()`, so
 a 401 genuinely terminates the request and cannot be fallen through.
@@ -764,6 +764,20 @@ Page URLs are `/<menu section>/<filename without .page>`. They come from the
   `formatSchedule()` (and `redactConfigJson()` in the plugin) replace it with
   `password_set`, and an update that sends it empty keeps the saved one.
   Never return it.
+- `GET /api/widgets.php?ids=id1,id2` - Service widgets, the one-line summary of
+  a service on its card (`classes/ServiceWidgets.php`). Configured only by the
+  gethomepage labels `homepage.widget.*`, with gethomepage's type names, options
+  and fields. The request names container ids only: the server reads the labels
+  from Docker and calls the service itself, so the key never reaches the
+  browser and a client cannot choose the URL. Without `homepage.widget.url` the
+  base URL is the container's own address plus the container port in
+  `[PORT:n]` of `net.unraid.docker.webui`: the bridge IP, `127.0.0.1` on the
+  host network, the LAN IP on macvlan/ipvlan, then once the published host
+  port. Answers are cached for 30 seconds in `/var/run`, without the key.
+  `{{HOMEPAGE_VAR_*}}` placeholders are refused, not resolved: gethomepage fills
+  them from its own container's environment. GraphQL mode calls this PHP
+  endpoint too (`graphql.ts` inherits it from `phpBackend`); the plugin has no
+  port yet.
 - `GET /api/paths.php?scope=host|container&path=<partial>&container=<name>` -
   Lists directories for the backup form's path suggestions. Read only. A host
   listing stays inside `BACKUP_ALLOWED_ROOTS`. A container listing stays inside

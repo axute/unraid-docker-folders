@@ -98,7 +98,7 @@ function handlePost()
 
   // Validate key against allowlist
   $allowedKeys = [
-    'distinguish_healthy', 'show_stats', 'replace_docker_section',
+    'distinguish_healthy', 'show_stats', 'show_service_widgets', 'replace_docker_section',
     'show_legacy_containers', 'show_legacy_buttons',
     'show_folder_ports', 'show_inline_logs', 'enable_adopt',
     'enable_security_advisor',

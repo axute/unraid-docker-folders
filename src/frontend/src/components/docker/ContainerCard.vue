@@ -76,6 +76,7 @@
 
       <ActionFailureLine :container="container" class="px-4 sm:px-6 pb-1" />
       <PortProblemLine :container="container" class="px-4 sm:px-6 pb-1" />
+      <ServiceWidgetLine :container="container" class="px-4 sm:px-6 pb-1" />
   
       <!-- Compact ports (collapsed) -->
       <div v-if="compactPorts && !expanded" class="px-4 sm:px-6 pb-0.5">
@@ -220,6 +221,7 @@
         </span>
         <ActionFailureLine :container="container" />
         <PortProblemLine :container="container" />
+        <ServiceWidgetLine :container="container" />
       </div>
 
       <!-- Compact ports (list collapsed) -->
@@ -373,6 +375,7 @@ import IconAutostart from '@/components/icons/IconAutostart.vue';
 import IconAdopt from '@/components/icons/IconAdopt.vue';
 import ActionFailureLine from '@/components/docker/ActionFailureLine.vue';
 import PortProblemLine from '@/components/docker/PortProblemLine.vue';
+import ServiceWidgetLine from '@/components/docker/ServiceWidgetLine.vue';
 
 const isMobile = useIsMobile();
 const dockerStore = useDockerStore();

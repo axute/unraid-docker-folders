@@ -25,6 +25,8 @@ export const useSettingsStore = defineStore('settings', () => {
   /** Whether an automatic sort mode also reorders folders. Off keeps the folder drag order. */
   const sortFolders = ref(false);
   const showStats = ref(true);
+  /** The gethomepage-style service summaries on cards with `homepage.widget.*` labels. */
+  const showServiceWidgets = ref(true);
   const replaceDockerSection = ref(true);
   const showFolderPorts = ref(true);
   const showInlineLogs = ref(false);
@@ -68,6 +70,9 @@ export const useSettingsStore = defineStore('settings', () => {
       }
       if ('show_stats' in settings) {
         showStats.value = settings.show_stats !== '0';
+      }
+      if ('show_service_widgets' in settings) {
+        showServiceWidgets.value = settings.show_service_widgets !== '0';
       }
       if ('replace_docker_section' in settings) {
         replaceDockerSection.value = settings.replace_docker_section === '1';
@@ -166,6 +171,16 @@ export const useSettingsStore = defineStore('settings', () => {
 
     try {
       await useBackend().settings.set('show_stats', value ? '1' : '0');
+    } catch (e) {
+      console.error('Error saving setting:', e);
+    }
+  }
+
+  async function setShowServiceWidgets(value: boolean) {
+    showServiceWidgets.value = value;
+
+    try {
+      await useBackend().settings.set('show_service_widgets', value ? '1' : '0');
     } catch (e) {
       console.error('Error saving setting:', e);
     }
@@ -338,6 +353,8 @@ export const useSettingsStore = defineStore('settings', () => {
     sortFolders,
     setSortFolders,
     showStats,
+    showServiceWidgets,
+    setShowServiceWidgets,
     replaceDockerSection,
     showFolderPorts,
     showInlineLogs,

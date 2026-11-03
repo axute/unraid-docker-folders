@@ -126,6 +126,10 @@ export const phpBackend: Backend = {
     get: (ids) => request(`${API_BASE}/stats.php?ids=${ids.join(',')}`),
   },
 
+  serviceWidgets: {
+    get: (ids) => request(`${API_BASE}/widgets.php?ids=${ids.map(enc).join(',')}`),
+  },
+
   schedules: {
     list: () => request(`${API_BASE}/schedules.php`),
     create: (body) => post(`${API_BASE}/schedules.php`, body),

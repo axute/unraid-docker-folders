@@ -78,6 +78,9 @@
       <file>PostgresBackupTest.php</file>
       <file>PostgresBackupRunTest.php</file>
     </testsuite>
+    <testsuite name="ServiceWidgets">
+      <file>ServiceWidgetsTest.php</file>
+    </testsuite>
     <testsuite name="SecurityAdvisor">
       <file>SecurityAdvisorTest.php</file>
     </testsuite>

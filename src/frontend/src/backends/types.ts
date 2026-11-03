@@ -20,6 +20,7 @@
 import type { Container, SecurityDismissal } from '@/stores/docker';
 import type { AdoptFields } from '@/utils/unraidHandoff';
 import type { ContainerStats } from '@/stores/stats';
+import type { ServiceWidget } from '@/types/serviceWidget';
 import type { ImageUpdateStatus } from '@/stores/updates';
 import type {
   BackupEntry,
@@ -192,6 +193,11 @@ export interface Backend {
 
   stats: {
     get(ids: string[]): Promise<BackendResult<{ stats?: Record<string, ContainerStats | null> }>>;
+  };
+
+  /** Service widgets from `homepage.widget.*` labels. A container without one is left out. */
+  serviceWidgets: {
+    get(ids: string[]): Promise<BackendResult<ErrorBody & { widgets?: Record<string, ServiceWidget> }>>;
   };
 
   schedules: {
